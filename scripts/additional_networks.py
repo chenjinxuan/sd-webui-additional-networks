@@ -52,19 +52,19 @@ class Script(scripts.Script):
         with gr.Group():
             with gr.Accordion("Additional Networks", open=False):
                 with gr.Row():
-                    enabled = gr.Checkbox(label="Enable", value=False)
+                    enabled = gr.Checkbox(elem_id="ext_an_enabled",label="Enable", value=False)
                     ctrls.append(enabled)
                     self.infotext_fields.append((enabled, "AddNet Enabled"))
-                    separate_weights = gr.Checkbox(label="Separate UNet/Text Encoder weights", value=False)
+                    separate_weights = gr.Checkbox(elem_id="ext_an_separate",label="Separate UNet/Text Encoder weights", value=False)
                     ctrls.append(separate_weights)
                     self.infotext_fields.append((separate_weights, "AddNet Separate Weights"))
 
                 for i in range(MAX_MODEL_COUNT):
                     with FormRow(variant="compact"):
-                        module = gr.Dropdown(["LoRA"], label=f"Network module {i+1}", value="LoRA")
-                        model = gr.Dropdown(list(lora_models.keys()), label=f"Model {i+1}", value="None")
+                        module = gr.Dropdown(["LoRA"],elem_id=f"ext_an_network_module_{i+1}", label=f"Network module {i+1}", value="LoRA")
+                        model = gr.Dropdown(list(lora_models.keys()),elem_id=f"ext_an_model_{i+1}",  label=f"Model {i+1}", value="None")
                         with gr.Row(visible=False):
-                            model_path = gr.Textbox(value="None", interactive=False, visible=False)
+                            model_path = gr.Textbox(value="None",elem_id=f"ext_an_model_path_{i+1}", interactive=False, visible=False)
                         model.change(
                             lambda module, model, i=i: model_util.lora_models.get(model, "None"),
                             inputs=[module, model],
@@ -92,12 +92,12 @@ class Script(scripts.Script):
                         # perhaps there is no user to train Text Encoder only, Weight A is U-Net
                         # The name of label will be changed in future (Weight A and B), but UNet and TEnc for now for easy understanding
                         with gr.Column() as col:
-                            weight = gr.Slider(label=f"Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=True)
+                            weight = gr.Slider(elem_id=f"ext_an_weight_{i+1}",label=f"Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=True)
                             weight_unet = gr.Slider(
-                                label=f"UNet Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=False
+                                elem_id=f"ext_an_unet_weight_{i+1}",label=f"UNet Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=False
                             )
                             weight_tenc = gr.Slider(
-                                label=f"TEnc Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=False
+                                elem_id=f"ext_an_tenc_weight_{i+1}",label=f"TEnc Weight {i+1}", value=1.0, minimum=-1.0, maximum=2.0, step=0.05, visible=False
                             )
 
                         weight.change(lambda w: (w, w), inputs=[weight], outputs=[weight_unet, weight_tenc])
@@ -148,7 +148,7 @@ class Script(scripts.Script):
                 # mask for regions
                 with gr.Accordion("Extra args", open=False):
                     with gr.Row():
-                        mask_image = gr.Image(label="mask image:")
+                        mask_image = gr.Image(label="mask image:",elem_id="ext_an_mask_image")
                         ctrls.append(mask_image)
 
                 refresh_models = gr.Button(value="Refresh models")
