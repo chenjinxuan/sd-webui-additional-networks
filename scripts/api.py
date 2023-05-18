@@ -1,8 +1,8 @@
 from typing import Callable
 from threading import Lock
 from secrets import compare_digest
+from modules import shared, script_callbacks
 
-from modules import shared
 from modules.api.api import decode_base64_to_image
 from modules.call_queue import queue_lock
 from fastapi import FastAPI, Depends, HTTPException
@@ -90,3 +90,6 @@ class Api:
 
 def on_app_started(_, app: FastAPI):
     Api(app, queue_lock, '/test/v1')
+
+
+script_callbacks.on_app_started(on_app_started)

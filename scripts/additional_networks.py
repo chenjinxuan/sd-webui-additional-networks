@@ -6,7 +6,6 @@ import numpy as np
 import modules.scripts as scripts
 from modules import shared, script_callbacks
 import gradio as gr
-from api import on_app_started
 import modules.ui
 from modules.ui_components import ToolButton, FormRow
 
@@ -396,4 +395,3 @@ script_callbacks.on_script_unloaded(on_script_unloaded)
 script_callbacks.on_ui_tabs(on_ui_tabs)
 script_callbacks.on_ui_settings(on_ui_settings)
 script_callbacks.on_infotext_pasted(on_infotext_pasted)
-script_callbacks.on_app_started(on_app_started)
