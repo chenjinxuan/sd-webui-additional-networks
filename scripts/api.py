@@ -3,11 +3,10 @@ from threading import Lock
 from secrets import compare_digest
 from modules import shared, script_callbacks
 
-from modules.api.api import decode_base64_to_image
 from modules.call_queue import queue_lock
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-
+from scripts import model_util
 
 
 class Api:
@@ -22,16 +21,16 @@ class Api:
         self.queue_lock = queue_lock
         self.prefix = prefix
 
-        self.add_api_route(
-            'interrogate',
-            self.endpoint_interrogate,
-            methods=['POST'],
-            response_model={}
-        )
+        # self.add_api_route(
+        #     'interrogate',
+        #     self.endpoint_interrogate,
+        #     methods=['POST'],
+        #     response_model={}
+        # )
 
         self.add_api_route(
-            'interrogators',
-            self.endpoint_interrogators,
+            'refresh-model',
+            self.endpoint_refesh_model,
             methods=['GET'],
             response_model={}
         )
@@ -56,9 +55,9 @@ class Api:
             return self.app.add_api_route(path, endpoint, dependencies=[Depends(self.auth)], **kwargs)
         return self.app.add_api_route(path, endpoint, **kwargs)
 
-    def endpoint_interrogate(self, req):
-        print("11")
-        return req
+    # def endpoint_interrogate(self, req):
+    #     print("11")
+    #     return req
         # if req.image is None:
         #     raise HTTPException(404, 'Image not found')
         #
@@ -80,16 +79,15 @@ class Api:
         #         )
         #     })
 
-    def endpoint_interrogators(self,req):
-        print("22")
-        return req
+    def endpoint_refesh_model(self, req):
+        model_util.update_models()
         # return models.InterrogatorsResponse(
         #     models=list(utils.interrogators.keys())
         # )
 
 
 def on_app_started(_, app: FastAPI):
-    Api(app, queue_lock, '/test/v1')
+    Api(app, queue_lock, '/an/v1')
 
 
 script_callbacks.on_app_started(on_app_started)
